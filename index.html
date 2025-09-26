@@ -159,7 +159,7 @@ input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px soli
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script type="text/javascript">
-   // 🛑 BITTE HIER IHREN PUBLIC KEY VON EMAILJS EINTRAGEN 🛑
+   // IHR PUBLIC KEY
    emailjs.init("R-lWfM9BhbTaTWskW"); 
 </script>
 <script>
@@ -337,7 +337,7 @@ document.getElementById('modal-cancel').addEventListener('click', closeModal);
 modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
 
 
-/* NEUE LOGIK FÜR DEN EMAILJS VERSAND */
+/* LOGIK FÜR DEN EMAILJS VERSAND */
 document.getElementById('booking-form').addEventListener('submit', (e) => {
     e.preventDefault();
     if (!selectedOpa) return alert('Kein Opa ausgewählt.');
@@ -348,3 +348,60 @@ document.getElementById('booking-form').addEventListener('submit', (e) => {
         name: form.name.value.trim(),
         email: form.email.value.trim(),
         date: form.date.value,
+        purpose: form.purpose.value,
+        message: form.msg.value.trim()
+    };
+
+    // Einfache Validierung
+    if (!data.name || !data.email || !data.date || !data.purpose) {
+        return alert('Bitte fülle alle Pflichtfelder aus.');
+    }
+
+    // Daten für die EmailJS-Vorlage vorbereiten 
+    const templateParams = {
+        // Die E-Mail-Adresse des Empfängers (Ihre Adresse)
+        to_email: 'Samuel@mxweiss.de', 
+        
+        // Die Platzhalter, die zu IHRER EmailJS-Vorlage passen müssen
+        from_name: data.name,
+        from_email: data.email,
+        opa_name: data.opaName,
+        booking_date: new Date(data.date).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }), 
+        booking_purpose: data.purpose,
+        user_message: data.message
+    };
+    
+    // Deaktiviere den Button und zeige "Sende..."
+    const submitButton = form.querySelector('.book');
+    submitButton.textContent = 'Sende...';
+    submitButton.disabled = true;
+
+    // E-Mail senden mit Ihren EmailJS-IDs
+    // IHRE SERVICE ID und TEMPLATE ID
+    emailjs.send('service_tgg88pq', 'template_cfcflgu', templateParams)
+        .then((response) => {
+            console.log('E-Mail erfolgreich gesendet!', response.status, response.text);
+            alert(`Deine Anfrage für ${data.opaName} wurde erfolgreich abgesendet. Du erhältst eine Bestätigungsemail.`);
+            
+            // Speichere lokal (Demo-Funktionalität beibehalten)
+            const existing = JSON.parse(localStorage.getItem('rent-a-opa-bookings') || '[]');
+            existing.push({...data, id: 'bk_' + Date.now()});
+            localStorage.setItem('rent-a-opa-bookings', JSON.stringify(existing));
+            
+            closeModal();
+        }, (error) => {
+            console.error('E-Mail Senden fehlgeschlagen:', error);
+            alert('Fehler beim Senden der Anfrage. Bitte überprüfen Sie Ihre EmailJS-Konfiguration.');
+        })
+        .finally(() => {
+            // Button wiederherstellen
+            submitButton.textContent = 'Anfrage absenden';
+            submitButton.disabled = false;
+        });
+});
+/* Optional: load demo bookings in console for developer */
+console.info('Demo-Opas geladen:', opas);
+</script>
+</body>
+
+</html>
