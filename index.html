@@ -159,8 +159,8 @@ input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px soli
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script type="text/javascript">
-   // IHR PUBLIC KEY
-   emailjs.init("R-lWfM9BhbTaTWskW"); 
+   // IHR PUBLIC KEY
+   emailjs.init("R-lWfM9BhbTaTWskW"); 
 </script>
 <script>
 /* Beispielprofile */
@@ -245,7 +245,7 @@ age: 72,
 skills: ['Modelleisenbahn', 'Geschichte', 'Computer-Hilfe'],
 location: 'Leipzig',
 price: '50€ /Stunde',
-img: 'https://img.fotocommunity.com/opa-12f69eda-c776-4605-a217-180080d2295b.jpg?height=1080'
+img: 'https://img.fotocommunity.com/opa-12f69eda-c776-4605-a217-180080d295b.jpg?height=1080'
 },
 {
 id: 'opa10',
@@ -273,6 +273,25 @@ skills: ['Briefmarken', 'Vorlesen', 'Kochen'],
 location: 'Nürnberg',
 price: '62€ /Stunde',
 img: 'https://www.fasching365.de/media/catalog/product/cache/7/image/040ec09b1e35df139433887a97daa66f/w/d/wdm1516-00499_a_8.jpg'
+},
+// ZWEI NEUE OPAS HIER EINGEFÜGT:
+{
+id: 'opa13',
+name: 'Manfred',
+age: 70,
+skills: ['Wanderführer', 'Holzarbeiten', 'Geografie'],
+location: 'Freiburg',
+price: '52€ /Stunde',
+img: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8b2xkJTIwbWFufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
+},
+{
+id: 'opa14',
+name: 'Erich',
+age: 73,
+skills: ['Gedichte', 'Angeln', 'Kochen'],
+location: 'Bremen',
+price: '58€ /Stunde',
+img: 'https://images.unsplash.com/photo-1582092790076-a05e55042456?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8b2xkJTIwbWFufGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60'
 }
 ];
 /* Render Cards */
@@ -339,65 +358,65 @@ modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
 
 /* LOGIK FÜR DEN EMAILJS VERSAND */
 document.getElementById('booking-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!selectedOpa) return alert('Kein Opa ausgewählt.');
+    e.preventDefault();
+    if (!selectedOpa) return alert('Kein Opa ausgewählt.');
 
-    const form = e.target;
-    const data = {
-        opaName: selectedOpa.name,
-        name: form.name.value.trim(),
-        email: form.email.value.trim(),
-        date: form.date.value,
-        purpose: form.purpose.value,
-        message: form.msg.value.trim()
-    };
+    const form = e.target;
+    const data = {
+        opaName: selectedOpa.name,
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        date: form.date.value,
+        purpose: form.purpose.value,
+        message: form.msg.value.trim()
+    };
 
-    // Einfache Validierung
-    if (!data.name || !data.email || !data.date || !data.purpose) {
-        return alert('Bitte fülle alle Pflichtfelder aus.');
-    }
+    // Einfache Validierung
+    if (!data.name || !data.email || !data.date || !data.purpose) {
+        return alert('Bitte fülle alle Pflichtfelder aus.');
+    }
 
-    // Daten für die EmailJS-Vorlage vorbereiten 
-    const templateParams = {
-        // Die E-Mail-Adresse des Empfängers (Ihre Adresse)
-        to_email: 'Samuel@mxweiss.de', 
-        
-        // Die Platzhalter, die zu IHRER EmailJS-Vorlage passen müssen
-        from_name: data.name,
-        from_email: data.email,
-        opa_name: data.opaName,
-        booking_date: new Date(data.date).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }), 
-        booking_purpose: data.purpose,
-        user_message: data.message
-    };
-    
-    // Deaktiviere den Button und zeige "Sende..."
-    const submitButton = form.querySelector('.book');
-    submitButton.textContent = 'Sende...';
-    submitButton.disabled = true;
+    // Daten für die EmailJS-Vorlage vorbereiten 
+    const templateParams = {
+        // Die E-Mail-Adresse des Empfängers (Ihre Adresse)
+        to_email: 'Samuel@mxweiss.de', 
+        
+        // Die Platzhalter, die zu IHRER EmailJS-Vorlage passen müssen
+        from_name: data.name,
+        from_email: data.email,
+        opa_name: data.opaName,
+        booking_date: new Date(data.date).toLocaleString('de-DE', { timeZone: 'Europe/Berlin' }), 
+        booking_purpose: data.purpose,
+        user_message: data.message
+    };
+    
+    // Deaktiviere den Button und zeige "Sende..."
+    const submitButton = form.querySelector('.book');
+    submitButton.textContent = 'Sende...';
+    submitButton.disabled = true;
 
-    // E-Mail senden mit Ihren EmailJS-IDs
-    // IHRE SERVICE ID und TEMPLATE ID
-    emailjs.send('service_tgg88pq', 'template_cfcflgu', templateParams)
-        .then((response) => {
-            console.log('E-Mail erfolgreich gesendet!', response.status, response.text);
-            alert(`Deine Anfrage für ${data.opaName} wurde erfolgreich abgesendet. Du erhältst eine Bestätigungsemail.`);
-            
-            // Speichere lokal (Demo-Funktionalität beibehalten)
-            const existing = JSON.parse(localStorage.getItem('rent-a-opa-bookings') || '[]');
-            existing.push({...data, id: 'bk_' + Date.now()});
-            localStorage.setItem('rent-a-opa-bookings', JSON.stringify(existing));
-            
-            closeModal();
-        }, (error) => {
-            console.error('E-Mail Senden fehlgeschlagen:', error);
-            alert('Fehler beim Senden der Anfrage. Bitte überprüfen Sie Ihre EmailJS-Konfiguration.');
-        })
-        .finally(() => {
-            // Button wiederherstellen
-            submitButton.textContent = 'Anfrage absenden';
-            submitButton.disabled = false;
-        });
+    // E-Mail senden mit Ihren EmailJS-IDs
+    // IHRE SERVICE ID und TEMPLATE ID
+    emailjs.send('service_tgg88pq', 'template_cfcflgu', templateParams)
+        .then((response) => {
+            console.log('E-Mail erfolgreich gesendet!', response.status, response.text);
+            alert(`Deine Anfrage für ${data.opaName} wurde erfolgreich abgesendet. Du erhältst eine Bestätigungsemail.`);
+            
+            // Speichere lokal (Demo-Funktionalität beibehalten)
+            const existing = JSON.parse(localStorage.getItem('rent-a-opa-bookings') || '[]');
+            existing.push({...data, id: 'bk_' + Date.now()});
+            localStorage.setItem('rent-a-opa-bookings', JSON.stringify(existing));
+            
+            closeModal();
+        }, (error) => {
+            console.error('E-Mail Senden fehlgeschlagen:', error);
+            alert('Fehler beim Senden der Anfrage. Bitte überprüfen Sie Ihre EmailJS-Konfiguration.');
+        })
+        .finally(() => {
+            // Button wiederherstellen
+            submitButton.textContent = 'Anfrage absenden';
+            submitButton.disabled = false;
+        });
 });
 /* Optional: load demo bookings in console for developer */
 console.info('Demo-Opas geladen:', opas);
@@ -405,4 +424,3 @@ console.info('Demo-Opas geladen:', opas);
 </body>
 
 </html>
-
